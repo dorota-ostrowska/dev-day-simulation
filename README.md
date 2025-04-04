@@ -4,4 +4,15 @@ This repo contains materials for a 1-day Ørsted workshop, giving IT students ha
 ## Technologies 🛠
 
 ## Getting started 🎬
+1. Create a virtual environment.
 
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+2. Install necessary requirements.
+
+```bash
+pip install -r requirements.txt
+```

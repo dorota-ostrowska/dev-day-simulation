@@ -4,6 +4,9 @@ This repo contains materials for a 1-day Ørsted workshop, giving IT students ha
 ## Technologies 🛠
 - Python 🐍
 - Flask 🌶️
+- Pandas 🐼
+- Openpyxl 📈
+- Requests 🤌
 
 ## Prerequisites 📋
 Before you begin, ensure you have the following installed:

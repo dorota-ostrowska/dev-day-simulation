@@ -1,5 +1,5 @@
 import requests
-from ..secrets import weather_api_key
+from private_config import weather_api_key
 
 class WeatherService:
     """Service for fetching weather data from OpenWeatherMap API"""

@@ -1,7 +1,8 @@
 import pandas as pd
 
-from services.excel_service import ExcelService
-from services.weather_service import WeatherService
+from src.services.excel_service import ExcelService
+from src.services.weather_service import WeatherService
+
 
 class WindFarmDataProcessor:
     def __init__(self, excel_service: ExcelService, weather_service: WeatherService) -> None:
@@ -16,16 +17,16 @@ class WindFarmDataProcessor:
         self.windfarms_df = self.excel_service.load_windfarm_data()
         
         # Add current wind speeds
-        self.windfarms_df['current_wind_speed'] = self.windfarms_df.apply(
+        self.windfarms_df['Current wind speed'] = self.windfarms_df.apply(
             lambda row: self.weather_service.get_wind_speed_data(
-                row['latitude'], 
-                row['longitude']
+                row['Latitude'], 
+                row['Longitude']
             ), 
             axis=1
         )
         
         # Calculate estimated current power output
-        self.windfarms_df['estimated_power'] = self.calculate_power_output()
+        self.windfarms_df['Estimated power'] = self.calculate_power_output()
         
         return self.windfarms_df
 
@@ -36,8 +37,8 @@ class WindFarmDataProcessor:
         """
         return self.windfarms_df.apply(
             lambda row: self._estimate_power(
-                row['current_wind_speed'], 
-                row['overall_capacity']
+                row['Current wind speed'], 
+                row['Overall capacity']
             ), 
             axis=1
         )
@@ -96,7 +97,7 @@ class WindFarmDataProcessor:
         if self.windfarms_df is None:
             self.process_data()
             
-        return self.windfarms_df.groupby('country').agg({
-            'overall_capacity': 'sum',
-            'estimated_power': 'sum'
+        return self.windfarms_df.groupby('Country').agg({
+            'Overall capacity': 'sum',
+            'Estimated power': 'sum'
         }).to_dict('index')

@@ -1,8 +1,27 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "base.html" %}
 
-<h1>Title</h1>
+{% block content %}
+<h1>Wind Farm Dashboard</h1>
 
-</body>
-</html>
+<section class="wind-farms">
+    <h2>Wind Farms</h2>
+    {% for farm in wind_farms %}
+    <div class="farm-card">
+        <h3>{{ farm.name }}</h3>
+        <p>Current Wind Speed: {{ farm.current_wind_speed }} m/s</p>
+        <p>Estimated Output: {{ farm.estimated_output }} MW</p>
+    </div>
+    {% endfor %}
+</section>
+
+<section class="country-stats">
+    <h2>Country Statistics</h2>
+    {% for country, stats in country_stats.items() %}
+    <div class="country-card">
+        <h3>{{ country }}</h3>
+        <p>Total Capacity: {{ stats.overall_capacity }} MW</p>
+        <p>Current Output: {{ stats.estimated_output }} MW</p>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

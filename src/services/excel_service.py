@@ -17,13 +17,13 @@ class ExcelService:
             df = pd.read_excel(
                 self.file_path,
                 dtype={
-                    'windfarm_id': str,
-                    'windfarm_name': str,
-                    'overall_capacity': float,
-                    'number_of_turbines': int,
-                    'country': str,
-                    'latitude': float,
-                    'longitude': float,
+                    'ID': str,
+                    'Name': str,
+                    'Overall capacity': float,
+                    'Number of turbines': int,
+                    'Country': str,
+                    'Latitude': float,
+                    'Longitude': float,
                 }
             )
             return df

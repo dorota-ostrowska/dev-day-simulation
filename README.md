@@ -31,3 +31,17 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+
+3. Get OpenWeather API key.
+To access weather data, you need a free API key from OpenWeather:
+
+- Go to [https://openweathermap.org/](https://openweathermap.org/) and click **Sign In** to create an account.
+- After logging in, navigate to the [API keys section](https://home.openweathermap.org/api_keys).
+![alt text](docs/images/my_api_keys.png)
+- Provide a name of your key (e.g., `my-weather-key`), click **Create key**. 
+![alt text](docs/images/create_key.png)
+- Copy your unique API key (the long string).
+![alt text](docs/images/copy_key.png)
+- Store this key in your configuration file `private_config.py` in the `src` folder.
+![alt text](docs/images/store_key.png)
+> ⚠️ **Security Warning**: Keep your API key private! Never commit it to version control or share it publicly. The `private_config.py` file is already in `.gitignore` to prevent accidental commits.

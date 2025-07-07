@@ -1,32 +1,67 @@
 import pandas as pd
+import os
 
-class ExcelService:
-    """Service for handling wind farm data from Excel files"""
 
-    def __init__(self, file_path: str) -> None:
-        """
-        Initialize Excel service with file path
-        """
-        self.file_path = file_path
+class WindFarmDataLoader:
+    """Simple service for loading wind farm data from Excel files"""
 
-    def load_windfarm_data(self) -> pd.DataFrame:
+    def __init__(self, data_file_path: str):
         """
-        Load wind farms data from Excel file
+        Initialize the data loader with file path
+        
+        Args:
+            data_file_path: Path to the Excel file containing wind farm data
         """
+        self.data_file_path = data_file_path
+
+    def load_wind_farm_data(self) -> pd.DataFrame:
+        """
+        Load wind farm data from Excel file with proper column types
+        
+        Returns:
+            DataFrame containing wind farm information, or empty DataFrame if loading fails
+        """
+        # Check if file exists
+        if not os.path.exists(self.data_file_path):
+            print(f"❌ Data file not found: {self.data_file_path}")
+            return pd.DataFrame()
+        
         try:
-            df = pd.read_excel(
-                self.file_path,
-                dtype={
-                    'ID': str,
-                    'Name': str,
-                    'Overall capacity': float,
-                    'Number of turbines': int,
-                    'Country': str,
-                    'Latitude': float,
-                    'Longitude': float,
-                }
+            print(f"📊 Loading wind farm data from: {self.data_file_path}")
+            
+            # Define expected column types for data validation
+            column_types = {
+                'ID': str,
+                'Name': str,
+                'Overall capacity': float,
+                'Number of turbines': int,
+                'Country': str,
+                'Latitude': float,
+                'Longitude': float,
+            }
+            
+            # Load Excel file with specified column types
+            wind_farm_data = pd.read_excel(
+                self.data_file_path,
+                dtype=column_types
             )
-            return df
-        except Exception as e:
-            print(f"Error loading Excel file: {e}")
+            
+            # Validate that we have data
+            if wind_farm_data.empty:
+                print("⚠️  Excel file is empty")
+                return pd.DataFrame()
+            
+            print(f"✅ Successfully loaded {len(wind_farm_data)} wind farms")
+            return wind_farm_data
+            
+        except FileNotFoundError:
+            print(f"❌ Excel file not found: {self.data_file_path}")
+            return pd.DataFrame()
+            
+        except pd.errors.EmptyDataError:
+            print("❌ Excel file is empty or contains no data")
+            return pd.DataFrame()
+            
+        except Exception as error:
+            print(f"❌ Error loading Excel file: {error}")
             return pd.DataFrame()

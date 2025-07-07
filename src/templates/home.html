@@ -1,27 +1,154 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Wind Farm Dashboard</h1>
+<header class="header">
+    <h1>🌬️ Wind Farm Dashboard</h1>
+    <p>Real-time monitoring of offshore wind energy production</p>
+</header>
 
-<section class="wind-farms">
-    <h2>Wind Farms</h2>
-    {% for farm in wind_farms %}
-    <div class="farm-card">
-        <h3>{{ farm.name }}</h3>
-        <p>Current Wind Speed: {{ farm.current_wind_speed }} m/s</p>
-        <p>Estimated Output: {{ farm.estimated_output }} MW</p>
+<div class="status-bar">
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Live Data</span>
     </div>
-    {% endfor %}
+    <div class="status-item">
+        <span>{{ status_metrics.active_farms }} Active Farms</span>
+    </div>
+    <div class="status-item">
+        <span>{{ status_metrics.countries }} Countries</span>
+    </div>
+    <div class="status-item">
+        <span>{{ status_metrics.total_capacity }} MW Total Capacity</span>
+    </div>
+</div>
+
+<section class="wind-farms-section">
+    <h2 class="section-title">🏭 Wind Farm Operations</h2>
+    <div class="grid">
+        {% for farm in wind_farms %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{{ farm.name }}</h3>
+                <div class="card-icon wind-icon">🌪️</div>
+            </div>
+            <div class="card-content">
+                <div class="metric">
+                    <span class="metric-label">Location</span>
+                    <span class="metric-value">{{ farm.country }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Current Wind Speed</span>
+                    <span class="metric-value">{{ farm.current_wind_speed }} m/s</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Estimated Output</span>
+                    <span class="metric-value">{{ farm.estimated_power }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Total Capacity</span>
+                    <span class="metric-value">{{ farm.overall_capacity }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Turbines</span>
+                    <span class="metric-value">{{ farm.number_of_turbines }}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ farm.progress_width }}%"></div>
+                </div>
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Efficiency: {{ farm.efficiency }}% • {{ farm.performance_rating }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 
-<section class="country-stats">
-    <h2>Country Statistics</h2>
-    {% for country, stats in country_stats.items() %}
-    <div class="country-card">
-        <h3>{{ country }}</h3>
-        <p>Total Capacity: {{ stats.overall_capacity }} MW</p>
-        <p>Current Output: {{ stats.estimated_output }} MW</p>
+<section class="country-stats-section">
+    <h2 class="section-title">🌍 Country Performance</h2>
+    <div class="grid">
+        {% for country in country_performance %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{{ country.name }}</h3>
+                <div class="card-icon country-icon">🏳️</div>
+            </div>
+            <div class="card-content">
+                <div class="metric">
+                    <span class="metric-label">Total Capacity</span>
+                    <span class="metric-value">{{ country.total_capacity }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Current Output</span>
+                    <span class="metric-value">{{ country.current_output }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Capacity Factor</span>
+                    <span class="metric-value">{{ country.capacity_factor }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ country.progress_width }}%"></div>
+                </div>
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Performance: {{ country.performance_level }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </section>
+
+<section class="summary-section">
+    <h2 class="section-title">📊 Fleet Summary</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Total Fleet Capacity</h3>
+                <div class="card-icon power-icon">⚡</div>
+            </div>
+            <div class="card-content">
+                <div class="metric">
+                    <span class="metric-label">Installed Capacity</span>
+                    <span class="metric-value">{{ fleet_summary.total_capacity }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Current Generation</span>
+                    <span class="metric-value">{{ fleet_summary.total_generation }} MW</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Fleet Efficiency</span>
+                    <span class="metric-value">{{ fleet_summary.fleet_efficiency }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ fleet_summary.progress_width }}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Environmental Impact</h3>
+                <div class="card-icon wind-icon">🌱</div>
+            </div>
+            <div class="card-content">
+                <div class="metric">
+                    <span class="metric-label">CO₂ Avoided (est.)</span>
+                    <span class="metric-value">{{ fleet_summary.co2_avoided }} tons/hour</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Homes Powered (est.)</span>
+                    <span class="metric-value">{{ fleet_summary.homes_powered }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Clean Energy</span>
+                    <span class="metric-value">100% Renewable</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>🌊 Ørsted Wind Farm Dashboard • Last updated: {{ status_metrics.last_updated }} • Data refreshed every 5 minutes</p>
+</footer>
 {% endblock %}

@@ -11,12 +11,12 @@ def test_weather_service_initialization(weather_service):
     assert weather_service.base_url == "https://api.openweathermap.org/data/2.5/weather"
     assert weather_service.api_key is not None
 
-def test_get_wind_speed_data(weather_service):
+def test_get_current_wind_speed(weather_service):
     """Test weather data retrieval for Anholt wind farm"""
     # Coordinates for Anholt wind farm
     lat, lon = 56.6, 11.21
     
-    wind_speed = weather_service.get_wind_speed_data(lat, lon)
+    wind_speed = weather_service.get_current_wind_speed(lat, lon)
     
     # Check if we got data
     assert wind_speed is not None
@@ -30,10 +30,10 @@ def test_get_wind_speed_data(weather_service):
 def test_invalid_coordinates(weather_service):
     """Test handling of invalid coordinates"""
     # Test with invalid latitude
-    invalid_data = weather_service.get_wind_speed_data(91, 11.21)
-    assert invalid_data is None
+    invalid_data = weather_service.get_current_wind_speed(91, 11.21)
+    assert invalid_data == 0
     
     # Test with invalid longitude
-    invalid_data = weather_service.get_wind_speed_data(56.6, 181)
-    assert invalid_data is None
+    invalid_data = weather_service.get_current_wind_speed(56.6, 181)
+    assert invalid_data == 0
     

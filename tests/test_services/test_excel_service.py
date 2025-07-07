@@ -1,14 +1,14 @@
 import pytest
 import pandas as pd
 
-from src.services.excel_service import ExcelService
+from src.services.excel_service import WindFarmDataLoader
 
 @pytest.fixture
 def test_excel_service():
-    return ExcelService('tests/test_data/test_windfarms.xlsx')
+    return WindFarmDataLoader('tests/test_data/test_windfarms.xlsx')
 
-def test_load_windfarm_data(test_excel_service):
-    df = test_excel_service.load_windfarm_data()
+def test_load_wind_farm_data(test_excel_service):
+    df = test_excel_service.load_wind_farm_data()
     
     # Basic DataFrame checks
     assert isinstance(df, pd.DataFrame)

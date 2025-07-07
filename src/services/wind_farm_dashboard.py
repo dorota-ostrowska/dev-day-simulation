@@ -1,3 +1,17 @@
+"""
+Wind Farm Dashboard Service
+
+Main dashboard logic that combines data loading, weather information,
+and power calculations to create a comprehensive wind farm monitoring system.
+Processes raw data into formatted dashboard displays and performance metrics.
+
+Features:
+- Real-time weather data integration
+- Power generation estimates
+- Performance analytics
+- Country-level statistics
+"""
+
 from datetime import datetime
 
 from src.services.excel_service import WindFarmDataLoader
@@ -12,7 +26,7 @@ class WindFarmDashboard:
     and dashboard formatting into one simple, easy-to-understand module.
     """
 
-    def __init__(self, data_file_path: str):
+    def __init__(self, data_file_path: str) -> None:
         """
         Initialize the wind farm dashboard
 
@@ -24,7 +38,7 @@ class WindFarmDashboard:
         self.weather_service = WeatherService()
         self.wind_farm_data = None
 
-    def load_and_process_data(self):
+    def load_and_process_data(self) -> None:
         """Load wind farm data and add real-time weather information"""
         print("📊 Loading wind farm data...")
 
@@ -57,7 +71,7 @@ class WindFarmDashboard:
 
         print("✅ Data processing complete!")
 
-    def get_dashboard_data(self):
+    def get_dashboard_data(self) -> dict[str, any]:
         """
         Get all formatted data needed for the dashboard display
 
@@ -132,7 +146,7 @@ class WindFarmDashboard:
 
             return max_capacity  # Fallback for 10-12 m/s range
 
-    def _calculate_country_statistics(self):
+    def _calculate_country_statistics(self) -> dict[str, dict[str, float]]:
         """Calculate aggregated statistics by country"""
         return (
             self.wind_farm_data.groupby("Country")
@@ -140,7 +154,7 @@ class WindFarmDashboard:
             .to_dict("index")
         )
 
-    def _prepare_wind_farm_cards(self):
+    def _prepare_wind_farm_cards(self) -> list[dict[str, any]]:
         """Prepare individual wind farm cards with formatted data"""
         wind_farm_cards = []
 
@@ -174,7 +188,7 @@ class WindFarmDashboard:
 
         return wind_farm_cards
 
-    def _prepare_country_cards(self, country_stats):
+    def _prepare_country_cards(self, country_stats) -> list[dict[str, any]]:
         """Prepare country performance cards"""
         country_cards = []
 
@@ -204,7 +218,7 @@ class WindFarmDashboard:
 
         return country_cards
 
-    def _calculate_fleet_summary(self):
+    def _calculate_fleet_summary(self) -> dict[str, any]:
         """Calculate fleet-wide summary metrics"""
         total_capacity = self.wind_farm_data["Overall capacity"].sum()
         total_generation = self.wind_farm_data["Estimated power"].fillna(0).sum()
@@ -229,7 +243,7 @@ class WindFarmDashboard:
             "progress_width": min(round(fleet_efficiency, 1), 100),
         }
 
-    def _get_status_metrics(self, country_stats):
+    def _get_status_metrics(self, country_stats) -> dict[str, any]:
         """Get metrics for the status bar"""
         return {
             "active_farms": len(self.wind_farm_data),
@@ -262,7 +276,7 @@ class WindFarmDashboard:
         else:
             return "Low"
 
-    def _get_empty_dashboard_data(self):
+    def _get_empty_dashboard_data(self) -> dict[str, any]:
         """Return empty dashboard data structure for error cases"""
         return {
             "wind_farms": [],

@@ -1,3 +1,15 @@
+"""
+Weather Service Module
+
+Handles integration with OpenWeatherMap API to fetch real-time weather data
+for wind farm locations. Provides wind speed, direction and temperature data
+for power generation calculations.
+
+Example:
+    service = WeatherService()
+    weather_data = service.get_weather_data(56.6, 11.21)
+"""
+
 import requests
 from src.private_config import weather_api_key
 
@@ -5,7 +17,7 @@ from src.private_config import weather_api_key
 class WeatherService:
     """Simple service for fetching wind speed data from OpenWeatherMap API"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the weather service with API key validation"""
         self.api_key = weather_api_key
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"

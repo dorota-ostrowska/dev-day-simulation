@@ -1,3 +1,20 @@
+"""
+Excel Service Module
+
+Handles loading and parsing of wind farm data from Excel files.
+Provides structured access to wind farm information including locations,
+capacities, and operational parameters.
+
+The Excel file should contain columns:
+- ID: Unique identifier for each wind farm
+- Name: Wind farm name
+- Overall capacity: Total capacity in MW
+- Number of turbines: Count of turbines
+- Country: Location country
+- Latitude: Geographic latitude
+- Longitude: Geographic longitude
+"""
+
 import pandas as pd
 import os
 

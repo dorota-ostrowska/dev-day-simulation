@@ -1,3 +1,17 @@
+"""
+Wind Farm Dashboard Service
+
+Main dashboard logic that combines data loading, weather information,
+and power calculations to create a comprehensive wind farm monitoring system.
+Processes raw data into formatted dashboard displays and performance metrics.
+
+Features:
+- Real-time weather data integration
+- Power generation estimates
+- Performance analytics
+- Country-level statistics
+"""
+
 from datetime import datetime
 
 from src.services.excel_service import WindFarmDataLoader

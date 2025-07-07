@@ -5,7 +5,7 @@ import os
 class WindFarmDataLoader:
     """Simple service for loading wind farm data from Excel files"""
 
-    def __init__(self, data_file_path: str):
+    def __init__(self, data_file_path: str) -> None:
         """
         Initialize the data loader with file path
 

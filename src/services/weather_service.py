@@ -5,7 +5,7 @@ from src.private_config import weather_api_key
 class WeatherService:
     """Simple service for fetching wind speed data from OpenWeatherMap API"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the weather service with API key validation"""
         self.api_key = weather_api_key
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"

@@ -9,7 +9,7 @@ home = Blueprint("home", __name__)
 
 @home.route("/")
 @home.route("/home")
-def show_dashboard():
+def show_dashboard() -> str:
     """
     Display the wind farm dashboard with real-time data
 

@@ -18,6 +18,8 @@ This repo contains materials for a 1-day Ørsted workshop, giving IT students ha
 
 A beautiful, real-time dashboard for monitoring offshore wind farms built with Python and Flask. Perfect for learning web development, APIs, and data visualization!
 
+![Image presenting the dashboard](.assets/dashboard.png)
+
 ## 🛠 Technologies
 
 - 🐍 Python, core language
@@ -148,8 +150,9 @@ wind-farm-dashboard/
 
 - [ ] Add link to the map view of wind farms
 - [ ] Add refresh button to the dashboard which will reload data
+- [ ] Add loading screen
 - [ ] Implement historical data analysis
-- [ ] Visualize power generation trends
+- [ ] Visualize data on charts
 - [ ] Filter farms by country
 - [ ] Look through the code for `TODO:` comments and implement them
 

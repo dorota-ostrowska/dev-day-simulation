@@ -29,7 +29,7 @@ def show_dashboard() -> str:
 
         # Render template with processed data
         return render_template(
-            "home.html",
+            "home.html.j2",
             wind_farms=dashboard_data["wind_farms"],
             country_performance=dashboard_data["country_performance"],
             fleet_summary=dashboard_data["fleet_summary"],
@@ -44,7 +44,7 @@ def show_dashboard() -> str:
         empty_data = dashboard.get_empty_dashboard_data()
 
         return render_template(
-            "home.html",
+            "home.html.j2",
             wind_farms=empty_data["wind_farms"],
             country_performance=empty_data["country_performance"],
             fleet_summary=empty_data["fleet_summary"],

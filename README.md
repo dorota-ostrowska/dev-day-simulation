@@ -109,12 +109,12 @@ Visit [http://localhost:5000](http://localhost:5000) to see your wind farm dashb
 wind-farm-dashboard/
 ├── main.py                         # Application entry point
 ├── requirements.txt                # Python dependencies for the application
-├── requirements-dev.txt                # Python dependencies for development
+├── requirements-dev.txt            # Python dependencies for development
 ├── data/
 │   └── windfarms.xlsx              # Wind farm data
 ├── wind_app/
 │   ├── __init__.py                 # Flask app factory
-│   ├── private_config.py           # Your API key (not in git)
+│   ├── private_config.py            # Your API key (not in git)
 │   ├── routes/
 │   │   └── home.py                 # Dashboard route handler
 │   ├── services/
@@ -122,8 +122,8 @@ wind-farm-dashboard/
 │   │   ├── excel_service.py        # Excel data loading
 │   │   └── weather_service.py      # Weather API integration
 │   └── templates/
-│       ├── base.html               # HTML template base
-│       └── home.html               # Dashboard template
+│       ├── base.html.j2             # HTML template base
+│       └── home.html.j2            # Dashboard template
 └──  tests/                         # Test files
 ```
 

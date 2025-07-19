@@ -12,8 +12,21 @@ Example:
 
 import httpx
 
-from wind_app.private_config import weather_api_key
 from wind_app.utils import log
+
+# NOTE: This import is used to load the API key from private_config.py.
+#       If the file is not found and tests are not running - it raises an ImportError.
+try:
+    from wind_app.private_config import weather_api_key
+except ImportError:
+    import os
+
+    are_tests_running = os.getenv("PYTEST_VERSION") is not None
+
+    if not are_tests_running:
+        raise
+
+    weather_api_key = "some_not_existing_api_key_for_tests"
 
 
 class WeatherService:

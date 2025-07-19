@@ -1,8 +1,10 @@
-<div align="center">
+<div style="text-align: center">
 
 # 🤓 The Ørsted Trial: A Day in the Life of a Software Developer ⚡️
 
 This repo contains materials for a 1-day Ørsted workshop, giving IT students hands-on experience in:
+
+</div>
 
 ✅ agile teamwork
 
@@ -12,20 +14,19 @@ This repo contains materials for a 1-day Ørsted workshop, giving IT students ha
 
 🚢 simulating dynamic software dev environments
 
-</div>
-
 # 🌊 Wind Farm Dashboard
 
 A beautiful, real-time dashboard for monitoring offshore wind farms built with Python and Flask. Perfect for learning web development, APIs, and data visualization!
 
 ## 🛠 Technologies
-- 🐍 Python | Core language
-- 🌶️ Flask | Lightweight web framework
-- 🐼 Pandas | Data manipulation
-- 📈 Openpyxl | Excel handling
-- 🤌 Requests | API communication
-- 🎀 HTML | Frontend styling
-- 🥷 Jinja2 | Template rendering
+
+- 🐍 Python, core language
+- 🌶️ `flask`, lightweight web framework
+- 🐼 `pandas`, for data manipulation
+- 📈 `openpyxl`, Excel handling
+- 🤌 `requests`, API communication
+- 🥷 `Jinja2`, template rendering
+- 🎀 `HTML`, frontend
 
 ## ✨ Features
 
@@ -38,12 +39,16 @@ A beautiful, real-time dashboard for monitoring offshore wind farms built with P
 ## 🚀 Quick start
 
 ### Prerequisites
+
 Before you begin, ensure you have the following installed:
-- [Visual Studio Code](https://code.visualstudio.com/download)
-- [Python 3.13.2](https://www.python.org/downloads/)
+
+- [Visual Studio Code](https://code.visualstudio.com/download) or any code editor of your choice
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
+  - Python 3.13 with `uv` is required to run the application.
+    - `uv python install 3.13`
 - [Git](https://git-scm.com/downloads)
 
-### 1. Clone and setup ⚙️
+### Clone and setup ⚙️
 
 ```bash
 # Clone the repository
@@ -51,47 +56,49 @@ git clone https://github.com/dorota-ostrowska/dev-day-simulation
 cd dev-day-simulation
 
 # Create virtual environment
-python -m venv venv
+uv venv
 
 # Activate virtual environment
 # On Windows:
-venv\Scripts\activate
+.venv\Scripts\activate
 # On macOS/Linux:
-source venv/bin/activate
+source .venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+uv pip install -r requirements.txt -r requirements-dev.txt
 ```
 
-### 2. Get your API key 🔑
+### Get your API key 🔑
+
 To access weather data, you need a free API key from OpenWeather:
 
 1. Go to [https://openweathermap.org/](https://openweathermap.org/) and create a free account.
-2. After logging in, navigate to the [API keys section](https://home.openweathermap.org/api_keys).
-3. Provide a name of your key (e.g., `my-weather-key`), click **Create key**. 
-4. Copy your unique API key (the long string).
-5. Store this key in your configuration file `private_config.py` in the `src` folder.
+1. After logging in, navigate to the [API keys section](https://home.openweathermap.org/api_keys).
+1. Provide a name of your key (e.g., `dev-day-simulation-key`), click **Create key**.
+1. Copy your unique API key (the long string).
+1. Store this key in your configuration file `private_config.py` in the `wind_app` folder.
 
-> ⚠️ **Security Warning**: Keep your API key private! Never commit it to version control or share it publicly. The `private_config.py` file is already in `.gitignore` to prevent accidental commits.
+> ⚠️ **Security Warning**: Keep your API key private! Never commit it to version control or share it publicly. The `private_config.py` file is already in `.gitignore` to prevent accidental commits. If you don't know why API key should stay private - find out why by [visitting the link](https://www.shopify.com/blog/api-key-explained).
 
-### 3. Run the application 🏃
+### Run the application 🏃
 
 ```bash
 # Start the development server
-python main.py
+uv run python -m main
 ```
 
 Visit [http://localhost:5000](http://localhost:5000) to see your wind farm dashboard! 🎉
 
 ## 📁 Project Structure
 
-```
+```bash
 wind-farm-dashboard/
 ├── main.py                         # Application entry point
-├── requirements.txt                # Python dependencies
+├── requirements.txt                # Python dependencies for the application
+├── requirements-dev.txt                # Python dependencies for development
 ├── data/
 │   └── windfarms.xlsx              # Wind farm data
-├── src/
+├── wind_app/
 │   ├── __init__.py                 # Flask app factory
 │   ├── private_config.py           # Your API key (not in git)
 │   ├── routes/
@@ -106,9 +113,10 @@ wind-farm-dashboard/
 └──  tests/                         # Test files
 ```
 
-## 🧠 How it works
+## 🧠 How does it work
 
 ### Data flow ⚙️
+
 1. **📂 Load Data**: Read wind farm information from Excel file
 2. **🌬 Fetch Weather**: Get current wind speeds for each farm location
 3. **⚡ Calculate Power**: Use wind turbine power curves to estimate output
@@ -120,7 +128,7 @@ wind-farm-dashboard/
 - **WindFarmDashboard**: Main orchestration logic
 - **WeatherService**: Talks to OpenWeatherMap
 - **ExcelService**: Reads .xlsx data
-- **Templates**: Clean UI with Jinja2 and HTML
+- **Templates**: UI with Jinja2 and HTML
 
 ## 📄 License
 
@@ -130,7 +138,7 @@ This project is part of `The Ørsted Trial: A Day in the Life of a Software Deve
 
 **Happy coding! 🚀 Build something amazing with renewable energy data!**
 
-<div align="center">
+<div style="text-align: center">
 
 **Made with 💚 for renewable energy**
 

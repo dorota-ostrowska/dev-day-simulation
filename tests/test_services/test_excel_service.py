@@ -5,12 +5,12 @@ from wind_app.services.excel_service import WindFarmDataLoader
 
 
 @pytest.fixture
-def test_excel_service():
+def test_data_loader() -> WindFarmDataLoader:
     return WindFarmDataLoader("tests/test_data/test_windfarms.xlsx")
 
 
-def test_load_wind_farm_data(test_excel_service):
-    df = test_excel_service.load_wind_farm_data()
+def test_load_wind_farm_data(test_data_loader: WindFarmDataLoader):
+    df = test_data_loader.load_wind_farm_data()
 
     # Basic DataFrame checks
     assert isinstance(df, pd.DataFrame)

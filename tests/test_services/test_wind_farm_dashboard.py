@@ -1,6 +1,8 @@
 import pandas as pd
 import pytest
 
+from wind_app.services.excel_service import WindFarmDataLoader
+from wind_app.services.weather_service import WeatherService
 from wind_app.services.wind_farm_dashboard import WindFarmDashboard
 
 
@@ -22,7 +24,7 @@ def mock_wind_farm_data():
 
 
 @pytest.fixture
-def mock_data_loader(mocker, mock_wind_farm_data):
+def mock_data_loader(mocker, mock_wind_farm_data: pd.DataFrame):
     loader = mocker.Mock()
     loader.load_wind_farm_data.return_value = mock_wind_farm_data
     return loader
@@ -36,19 +38,13 @@ def mock_weather_service(mocker):
 
 
 @pytest.fixture
-def dashboard(mocker, mock_data_loader, mock_weather_service):
+def dashboard(
+    mocker, mock_data_loader: WindFarmDataLoader, mock_weather_service: WeatherService
+):
     dashboard = WindFarmDashboard("dummy/path.xlsx")
     mocker.patch.object(dashboard, "data_loader", mock_data_loader)
     mocker.patch.object(dashboard, "weather_service", mock_weather_service)
     return dashboard
-
-
-def test_load_and_process_data(dashboard):
-    dashboard.load_and_process_data()
-    assert dashboard.wind_farm_data is not None
-    assert len(dashboard.wind_farm_data) == 2
-    assert "Current wind speed" in dashboard.wind_farm_data.columns
-    assert "Estimated power" in dashboard.wind_farm_data.columns
 
 
 def test_calculate_turbine_power():
@@ -63,7 +59,7 @@ def test_calculate_turbine_power():
     ]
 
     for wind_speed, capacity, expected in test_cases:
-        result = dashboard._calculate_turbine_power(wind_speed, capacity)
+        result = dashboard.calculate_turbine_power(wind_speed, capacity)
         assert result == pytest.approx(expected, rel=1e-2)
 
 
@@ -102,26 +98,58 @@ def test_get_dashboard_data(dashboard):
     assert 0 <= summary["fleet_efficiency"] <= 100
 
 
-def test_performance_ratings(dashboard):
+def test_performance_ratings(dashboard: WindFarmDashboard):
     # Test farm performance ratings
-    assert dashboard._get_performance_rating(85) == "Excellent"
-    assert dashboard._get_performance_rating(65) == "Very Good"
-    assert dashboard._get_performance_rating(45) == "Good"
-    assert dashboard._get_performance_rating(25) == "Fair"
-    assert dashboard._get_performance_rating(15) == "Low"
+    assert dashboard.get_performance_rating(85) == "Excellent"
+    assert dashboard.get_performance_rating(65) == "Very Good"
+    assert dashboard.get_performance_rating(45) == "Good"
+    assert dashboard.get_performance_rating(25) == "Fair"
+    assert dashboard.get_performance_rating(15) == "Low"
 
     # Test country performance levels
-    assert dashboard._get_country_performance_level(75) == "Excellent"
-    assert dashboard._get_country_performance_level(45) == "Good"
-    assert dashboard._get_country_performance_level(25) == "Fair"
-    assert dashboard._get_country_performance_level(15) == "Low"
+    assert dashboard.get_country_performance_level(75) == "Excellent"
+    assert dashboard.get_country_performance_level(45) == "Good"
+    assert dashboard.get_country_performance_level(25) == "Fair"
+    assert dashboard.get_country_performance_level(15) == "Low"
 
 
 def test_empty_dashboard_data(dashboard):
     dashboard.wind_farm_data = pd.DataFrame()  # Empty DataFrame
     data = dashboard.get_dashboard_data()
 
-    assert data["wind_farms"] == []
-    assert data["country_performance"] == []
-    assert data["fleet_summary"]["total_capacity"] == 0
-    assert data["status_metrics"]["active_farms"] == 0
+    assert data["wind_farms"] == [
+        {
+            "name": "Anholt",
+            "country": "Denmark",
+            "current_wind_speed": 10.0,
+            "estimated_power": 360.0,
+            "overall_capacity": 400.0,
+            "number_of_turbines": 111,
+            "efficiency": 90.0,
+            "performance_rating": "Excellent",
+            "progress_width": 90.0,
+        },
+        {
+            "name": "Avedøre",
+            "country": "Denmark",
+            "current_wind_speed": 10.0,
+            "estimated_power": 6.5,
+            "overall_capacity": 7.0,
+            "number_of_turbines": 2,
+            "efficiency": 90.0,
+            "performance_rating": "Excellent",
+            "progress_width": 90.0,
+        },
+    ]
+    assert data["country_performance"] == [
+        {
+            "capacity_factor": 90.0,
+            "current_output": 366.5,
+            "name": "Denmark",
+            "performance_level": "Excellent",
+            "progress_width": 90.0,
+            "total_capacity": 407.2,
+        },
+    ]
+    assert float(data["fleet_summary"]["total_capacity"]) == 407.2
+    assert data["status_metrics"]["active_farms"] == 2

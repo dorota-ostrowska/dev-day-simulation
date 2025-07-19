@@ -24,7 +24,7 @@ A beautiful, real-time dashboard for monitoring offshore wind farms built with P
 - 🌶️ `flask`, lightweight web framework
 - 🐼 `pandas`, for data manipulation
 - 📈 `openpyxl`, Excel handling
-- 🤌 `requests`, API communication
+- 🤌 `httpx`, API communication
 - 🥷 `Jinja2`, template rendering
 - 🎀 `HTML`, frontend
 
@@ -87,6 +87,20 @@ To access weather data, you need a free API key from OpenWeather:
 uv run python -m main
 ```
 
+### Run the tests 🧪
+
+Run unit tests with:
+
+```bash
+uv run pytest
+```
+
+Run integration tests (requires a valid OpenWeatherMap API key) with:
+
+```bash
+uv run pytest -m "integration_test"
+```
+
 Visit [http://localhost:5000](http://localhost:5000) to see your wind farm dashboard! 🎉
 
 ## 📁 Project Structure
@@ -129,6 +143,15 @@ wind-farm-dashboard/
 - **WeatherService**: Talks to OpenWeatherMap
 - **ExcelService**: Reads .xlsx data
 - **Templates**: UI with Jinja2 and HTML
+
+## 💡 Ideas for features
+
+- [ ] Add link to the map view of wind farms
+- [ ] Add refresh button to the dashboard which will reload data
+- [ ] Implement historical data analysis
+- [ ] Visualize power generation trends
+- [ ] Filter farms by country
+- [ ] Look through the code for `TODO:` comments and implement them
 
 ## 📄 License
 

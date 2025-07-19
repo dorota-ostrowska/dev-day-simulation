@@ -10,17 +10,24 @@ Example:
     weather_data = service.get_weather_data(56.6, 11.21)
 """
 
-import requests
-from src.private_config import weather_api_key
+import httpx
+
+from wind_app.private_config import weather_api_key
+from wind_app.utils import log
 
 
 class WeatherService:
     """Simple service for fetching wind speed data from OpenWeatherMap API"""
 
-    def __init__(self) -> None:
+    def __init__(self, http_client: httpx.Client | None = None) -> None:
         """Initialize the weather service with API key validation"""
         self.api_key = weather_api_key
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"
+
+        if http_client is None:
+            self.http_client = httpx.Client()
+        else:
+            self.http_client = http_client
 
         # Check if API key is properly configured
         if self.api_key == "your_api_key_here":
@@ -35,14 +42,14 @@ class WeatherService:
         Get current wind speed for specific coordinates
 
         Args:
-            latitude: Location latitude (-90 to 90)
-            longitude: Location longitude (-180 to 180)
+            latitude: Location latitude (-90.0 to 90.0)
+            longitude: Location longitude (-180.0 to 180.0)
 
         Returns:
             Wind speed in meters per second, or 0 if request fails
         """
         # Prepare API request parameters
-        request_params = {
+        request_params: dict[str, str | float] = {
             "lat": latitude,
             "lon": longitude,
             "appid": self.api_key,
@@ -51,24 +58,31 @@ class WeatherService:
 
         try:
             # Make API request
-            response = requests.get(self.base_url, params=request_params, timeout=10)
+            response = self.http_client.get(
+                self.base_url, params=request_params, timeout=10
+            )
             response.raise_for_status()  # Raise exception for HTTP errors
+
+            # TODO: use LLM to prepare data model for the response
+            # .      Implement WeatherData class inheriting from typing.TypedDict
+            # .      and use it as type of weather_data variable
+            # .      This will allow to use IDE autocompletion and type checking
 
             # Parse JSON response
             weather_data = response.json()
             wind_speed = weather_data["wind"]["speed"]
 
-            print(f"✅ Wind speed for ({latitude}, {longitude}): {wind_speed} m/s")
+            log(f"✅ Wind speed for ({latitude}, {longitude}): {wind_speed} m/s")
             return wind_speed
 
-        except requests.RequestException as error:
-            print(f"❌ Weather API request failed: {error}")
+        except httpx.RequestError as error:
+            log(f"❌ Weather API request failed: {error}")
             return 0.0  # Return 0 instead of None for easier calculations
 
         except KeyError:
-            print("❌ Wind data not found in weather response")
+            log("❌ Wind data not found in weather response")
             return 0.0
 
         except Exception as error:
-            print(f"❌ Unexpected error getting wind speed: {error}")
+            log(f"❌ Unexpected error getting wind speed: {error}")
             return 0.0

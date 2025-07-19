@@ -1,5 +1,6 @@
 import pytest
-from src.services.weather_service import WeatherService
+
+from wind_app.services.weather_service import WeatherService
 
 
 @pytest.fixture

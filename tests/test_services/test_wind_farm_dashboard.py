@@ -1,6 +1,7 @@
-import pytest
 import pandas as pd
-from src.services.wind_farm_dashboard import WindFarmDashboard
+import pytest
+
+from wind_app.services.wind_farm_dashboard import WindFarmDashboard
 
 
 @pytest.fixture

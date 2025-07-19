@@ -1,7 +1,7 @@
-import pytest
 import pandas as pd
+import pytest
 
-from src.services.excel_service import WindFarmDataLoader
+from wind_app.services.excel_service import WindFarmDataLoader
 
 
 @pytest.fixture

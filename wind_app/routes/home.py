@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template
 
-from src.services.wind_farm_dashboard import WindFarmDashboard
-
+from wind_app.services.wind_farm_dashboard import WindFarmDashboard
 
 # Create blueprint for home page routes
 home = Blueprint("home", __name__)

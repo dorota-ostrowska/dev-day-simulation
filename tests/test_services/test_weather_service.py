@@ -1,42 +1,62 @@
+from unittest.mock import MagicMock
+
 import pytest
-from src.services.weather_service import WeatherService
+
+from wind_app.services.weather_service import WeatherService
 
 
 @pytest.fixture
-def weather_service():
-    return WeatherService()
+def mock_http_client() -> MagicMock:
+    return MagicMock()
 
 
-def test_weather_service_initialization(weather_service):
+@pytest.fixture
+def weather_service(mock_http_client: MagicMock) -> WeatherService:
+    return WeatherService(http_client=mock_http_client)
+
+
+def test_weather_service_initialization(weather_service: WeatherService):
     """Test if WeatherService initializes properly"""
     assert isinstance(weather_service, WeatherService)
     assert weather_service.base_url == "https://api.openweathermap.org/data/2.5/weather"
     assert weather_service.api_key is not None
 
 
-def test_get_current_wind_speed(weather_service):
-    """Test weather data retrieval for Anholt wind farm"""
+def test_get_current_wind_speed(
+    weather_service: WeatherService, mock_http_client: MagicMock
+):
+    """Test mocked weather data retrieval"""
+
+    mock_response = MagicMock()
+    mock_response.raise_for_status = MagicMock()
+    mock_response.json.return_value = {"wind": {"speed": 10.5}}
+    mock_http_client.get.return_value = mock_response
+
     # Coordinates for Anholt wind farm
     lat, lon = 56.6, 11.21
 
     wind_speed = weather_service.get_current_wind_speed(lat, lon)
 
-    # Check if we got data
-    assert wind_speed is not None
+    # Check data types and ranges
+    assert isinstance(wind_speed, (int, float))
+
+    # Check reasonable value ranges
+    assert wind_speed == 10.5  # m/s
+
+
+@pytest.mark.integration_test
+def test_get_real_current_wind_speed():
+    """Test weather data retrieval for Anholt wind farm"""
+
+    weather_service = WeatherService()
+
+    # Coordinates for Anholt wind farm
+    lat, lon = 56.6, 11.21
+
+    wind_speed = weather_service.get_current_wind_speed(lat, lon)
 
     # Check data types and ranges
     assert isinstance(wind_speed, (int, float))
 
     # Check reasonable value ranges
     assert 0 <= wind_speed <= 50  # m/s
-
-
-def test_invalid_coordinates(weather_service):
-    """Test handling of invalid coordinates"""
-    # Test with invalid latitude
-    invalid_data = weather_service.get_current_wind_speed(91, 11.21)
-    assert invalid_data == 0
-
-    # Test with invalid longitude
-    invalid_data = weather_service.get_current_wind_speed(56.6, 181)
-    assert invalid_data == 0

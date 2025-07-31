@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html.j2" %}
 
 {% block content %}
 <header class="header">
@@ -124,7 +124,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Environmental Impact</h3>
@@ -149,6 +149,7 @@
 </section>
 
 <footer class="footer">
-    <p>🌊 Ørsted Wind Farm Dashboard • Last updated: {{ status_metrics.last_updated }} • Data refreshed every 5 minutes</p>
+    <p>🌊 Ørsted Wind Farm Dashboard • Last updated: {{ status_metrics.last_updated }} • Data refreshed every 5 minutes
+    </p>
 </footer>
 {% endblock %}

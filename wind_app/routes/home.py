@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 
-from src.services.wind_farm_dashboard import WindFarmDashboard
-
+from wind_app.services.wind_farm_dashboard import WindFarmDashboard
+from wind_app.utils import log
 
 # Create blueprint for home page routes
 home = Blueprint("home", __name__)
@@ -18,18 +18,18 @@ def show_dashboard() -> str:
     """
     try:
         # Initialize the unified wind farm dashboard
-        print("🔧 Initializing wind farm dashboard...")
+        log("🔧 Initializing wind farm dashboard...")
 
         dashboard = WindFarmDashboard("data/windfarms.xlsx")
 
         # Get all dashboard data (loading, processing, and formatting)
         dashboard_data = dashboard.get_dashboard_data()
 
-        print("✅ Dashboard ready!")
+        log("✅ Dashboard ready!")
 
         # Render template with processed data
         return render_template(
-            "home.html",
+            "home.html.j2",
             wind_farms=dashboard_data["wind_farms"],
             country_performance=dashboard_data["country_performance"],
             fleet_summary=dashboard_data["fleet_summary"],
@@ -37,14 +37,14 @@ def show_dashboard() -> str:
         )
 
     except Exception as error:
-        print(f"❌ Error loading dashboard: {error}")
+        log(f"❌ Error loading dashboard: {error}")
 
         # Get empty dashboard data structure for error case
         dashboard = WindFarmDashboard("data/windfarms.xlsx")
-        empty_data = dashboard._get_empty_dashboard_data()
+        empty_data = dashboard.get_empty_dashboard_data()
 
         return render_template(
-            "home.html",
+            "home.html.j2",
             wind_farms=empty_data["wind_farms"],
             country_performance=empty_data["country_performance"],
             fleet_summary=empty_data["fleet_summary"],

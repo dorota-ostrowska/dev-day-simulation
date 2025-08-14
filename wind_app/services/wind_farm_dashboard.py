@@ -15,10 +15,11 @@ Features:
 from datetime import datetime
 from typing import Any
 
+import numpy as np
 from pandas import DataFrame
 
-from wind_app.services.excel_service import WindFarmDataLoader
 from wind_app.services.weather_service import WeatherService
+from wind_app.services.wind_farm_service.interface import AbstractWindFarmService
 from wind_app.utils import log
 
 
@@ -30,16 +31,19 @@ class WindFarmDashboard:
     and dashboard formatting into one simple, easy-to-understand module.
     """
 
-    def __init__(self, data_file_path: str) -> None:
+    def __init__(
+            self,
+            wind_farm_service: AbstractWindFarmService,
+            weather_service: WeatherService | None = None
+        ) -> None:
         """
         Initialize the wind farm dashboard
 
         Args:
             data_file_path: Path to the Excel file containing wind farm data
         """
-        self.data_file_path = data_file_path
-        self.data_loader = WindFarmDataLoader(data_file_path)
-        self.weather_service = WeatherService()
+        self._wind_farm_service = wind_farm_service
+        self._weather_service = weather_service if weather_service else WeatherService()
 
     def process_wind_farm_data(self, wind_farm_data: DataFrame) -> None:
         """Add real-time weather information to wind farm data"""
@@ -54,7 +58,7 @@ class WindFarmDashboard:
 
         # Add current wind speeds for each farm
         wind_farm_data["Current wind speed"] = wind_farm_data.apply(
-            lambda farm: self.weather_service.get_current_wind_speed(
+            lambda farm: self._weather_service.get_current_wind_speed(
                 farm["Latitude"], farm["Longitude"]
             ),
             axis=1,
@@ -64,8 +68,9 @@ class WindFarmDashboard:
         log("⚡ Calculating power output...")
         wind_farm_data["Estimated power"] = wind_farm_data.apply(
             lambda farm: self.calculate_turbine_power(
-                farm["Current wind speed"], farm["Overall capacity"]
-            ),
+                wind_speed=farm["Current wind speed"],
+                max_capacity=farm["Overall capacity"]
+            ) if farm["Current wind speed"] is not None else None,
             axis=1,
         )
 
@@ -80,8 +85,8 @@ class WindFarmDashboard:
         """
 
         # Load base wind farm data from Excel
-        wind_farm_data = self.data_loader.load_wind_farm_data()
-        self.process_wind_farm_data(wind_farm_data)
+        wind_farm_data = self._wind_farm_service.load_wind_farm_data()
+        self.process_wind_farm_data(wind_farm_data=wind_farm_data)
 
         # If still no data, return empty dashboard
         if wind_farm_data is None or wind_farm_data.empty:
@@ -153,8 +158,10 @@ class WindFarmDashboard:
         self, wind_farm_data: DataFrame
     ) -> dict[Any, Any]:
         """Calculate aggregated statistics by country"""
+        fixed_wind_farm_data = wind_farm_data.copy()
+        fixed_wind_farm_data["Estimated power"].replace(to_replace=np.nan, value=0, inplace=True)
         return (
-            wind_farm_data.groupby("Country")
+            fixed_wind_farm_data.groupby("Country")
             .agg({"Overall capacity": "sum", "Estimated power": "sum"})
             .to_dict("index")
         )
@@ -167,8 +174,8 @@ class WindFarmDashboard:
 
         for _, farm in wind_farm_data.iterrows():
             # Get values with safe defaults
-            current_wind_speed = farm.get("Current wind speed", 0) or 0
-            estimated_power = farm.get("Estimated power", 0) or 0
+            current_wind_speed = farm.get("Current wind speed", None)
+            estimated_power = farm.get("Estimated power", None)
             overall_capacity = farm.get("Overall capacity", 0) or 0
 
             # Calculate efficiency percentage
@@ -176,19 +183,19 @@ class WindFarmDashboard:
                 (estimated_power / overall_capacity * 100)
                 if overall_capacity > 0
                 else 0
-            )
+            ) if estimated_power is not None else None
 
             # Prepare card data
             farm_card = {
                 "name": farm.get("Name", "Unknown"),
                 "country": farm.get("Country", "Unknown"),
-                "current_wind_speed": round(current_wind_speed, 1),
-                "estimated_power": round(estimated_power, 1),
+                "current_wind_speed": round(current_wind_speed, 1) if current_wind_speed is not None else _NO_DATA_SYMBOL,
+                "estimated_power": round(estimated_power, 1) if estimated_power is not None else _NO_DATA_SYMBOL,
                 "overall_capacity": round(overall_capacity, 0),
                 "number_of_turbines": int(farm.get("Number of turbines", 0)),
-                "efficiency": round(efficiency, 1),
-                "performance_rating": self.get_performance_rating(efficiency),
-                "progress_width": min(round(efficiency, 1), 100),
+                "efficiency": round(efficiency, 1) if efficiency is not None else _NO_DATA_SYMBOL,
+                "performance_rating": self.get_performance_rating(efficiency) if efficiency is not None else _NO_DATA_SYMBOL,
+                "progress_width": min(round(efficiency, 1), 100) if efficiency is not None else _NO_DATA_SYMBOL,
             }
 
             wind_farm_cards.append(farm_card)
@@ -305,3 +312,6 @@ class WindFarmDashboard:
                 "last_updated": "No data available",
             },
         }
+
+
+_NO_DATA_SYMBOL = "-"  # Symbol for missing data in templates

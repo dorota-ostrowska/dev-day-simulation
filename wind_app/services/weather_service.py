@@ -50,7 +50,7 @@ class WeatherService:
         if not self.api_key:
             raise ValueError("OpenWeather API key is missing")
 
-    def get_current_wind_speed(self, latitude: float, longitude: float) -> float:
+    def get_current_wind_speed(self, latitude: float, longitude: float) -> float | None:
         """
         Get current wind speed for specific coordinates
 
@@ -90,12 +90,12 @@ class WeatherService:
 
         except httpx.RequestError as error:
             log(f"❌ Weather API request failed: {error}")
-            return 0.0  # Return 0 instead of None for easier calculations
+            return None
 
         except KeyError:
             log("❌ Wind data not found in weather response")
-            return 0.0
+            return None
 
         except Exception as error:
             log(f"❌ Unexpected error getting wind speed: {error}")
-            return 0.0
+            return None

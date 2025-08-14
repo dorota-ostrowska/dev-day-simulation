@@ -1,15 +1,15 @@
 import pandas as pd
 import pytest
 
-from wind_app.services.excel_service import WindFarmDataLoader
+from wind_app.services.wind_farm_service.excel import WindFarmServiceExcel
 
 
 @pytest.fixture
-def test_data_loader() -> WindFarmDataLoader:
-    return WindFarmDataLoader("tests/test_data/test_windfarms.xlsx")
+def test_data_loader() -> WindFarmServiceExcel:
+    return WindFarmServiceExcel("tests/test_data/test_windfarms.xlsx")
 
 
-def test_load_wind_farm_data(test_data_loader: WindFarmDataLoader):
+def test_load_wind_farm_data(test_data_loader: WindFarmServiceExcel):
     df = test_data_loader.load_wind_farm_data()
 
     # Basic DataFrame checks

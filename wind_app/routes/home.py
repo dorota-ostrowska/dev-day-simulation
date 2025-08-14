@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 
 from wind_app.services.wind_farm_dashboard import WindFarmDashboard
+from wind_app.services.wind_farm_service.excel import WindFarmServiceExcel
 from wind_app.utils import log
 
 # Create blueprint for home page routes
@@ -19,8 +20,12 @@ def show_dashboard() -> str:
     try:
         # Initialize the unified wind farm dashboard
         log("🔧 Initializing wind farm dashboard...")
-
-        dashboard = WindFarmDashboard("data/windfarms.xlsx")
+        wind_farm_service = WindFarmServiceExcel(
+            data_file_path="data/windfarms.xlsx"
+        )
+        dashboard = WindFarmDashboard(
+            wind_farm_service=wind_farm_service
+        )
 
         # Get all dashboard data (loading, processing, and formatting)
         dashboard_data = dashboard.get_dashboard_data()
@@ -29,7 +34,7 @@ def show_dashboard() -> str:
 
         # Render template with processed data
         return render_template(
-            "home.html.j2",
+            template_name_or_list="home.html.j2",
             wind_farms=dashboard_data["wind_farms"],
             country_performance=dashboard_data["country_performance"],
             fleet_summary=dashboard_data["fleet_summary"],

@@ -19,10 +19,11 @@ import os
 
 import pandas as pd
 
+from wind_app.services.wind_farm_service.interface import AbstractWindFarmService
 from wind_app.utils import log
 
 
-class WindFarmDataLoader:
+class WindFarmServiceExcel(AbstractWindFarmService):
     """Simple service for loading wind farm data from Excel files"""
 
     def __init__(self, data_file_path: str) -> None:

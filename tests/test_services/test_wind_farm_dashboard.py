@@ -1,9 +1,10 @@
 import pandas as pd
 import pytest
+from pytest_mock import MockerFixture
 
-from wind_app.services.excel_service import WindFarmDataLoader
 from wind_app.services.weather_service import WeatherService
 from wind_app.services.wind_farm_dashboard import WindFarmDashboard
+from wind_app.services.wind_farm_service.excel import WindFarmServiceExcel
 
 
 @pytest.fixture
@@ -24,14 +25,14 @@ def mock_wind_farm_data():
 
 
 @pytest.fixture
-def mock_data_loader(mocker, mock_wind_farm_data: pd.DataFrame):
+def mock_wind_farm_service(mocker: MockerFixture, mock_wind_farm_data: pd.DataFrame):
     loader = mocker.Mock()
     loader.load_wind_farm_data.return_value = mock_wind_farm_data
     return loader
 
 
 @pytest.fixture
-def mock_weather_service(mocker):
+def mock_weather_service(mocker: MockerFixture):
     service = mocker.Mock()
     service.get_current_wind_speed.return_value = 10.0
     return service
@@ -39,11 +40,12 @@ def mock_weather_service(mocker):
 
 @pytest.fixture
 def dashboard(
-    mocker, mock_data_loader: WindFarmDataLoader, mock_weather_service: WeatherService
-):
-    dashboard = WindFarmDashboard("dummy/path.xlsx")
-    mocker.patch.object(dashboard, "data_loader", mock_data_loader)
-    mocker.patch.object(dashboard, "weather_service", mock_weather_service)
+    mock_wind_farm_service: WindFarmServiceExcel, mock_weather_service: WeatherService
+) -> WindFarmDashboard:
+    dashboard = WindFarmDashboard(
+        wind_farm_service=mock_wind_farm_service,
+        weather_service=mock_weather_service
+    )
     return dashboard
 
 
@@ -63,7 +65,7 @@ def test_calculate_turbine_power():
         assert result == pytest.approx(expected, rel=1e-2)
 
 
-def test_get_dashboard_data(dashboard):
+def test_get_dashboard_data(dashboard: WindFarmDashboard) -> None:
     data = dashboard.get_dashboard_data()
 
     # Check all required sections are present
@@ -98,7 +100,7 @@ def test_get_dashboard_data(dashboard):
     assert 0 <= summary["fleet_efficiency"] <= 100
 
 
-def test_performance_ratings(dashboard: WindFarmDashboard):
+def test_performance_ratings(dashboard: WindFarmDashboard) -> None:
     # Test farm performance ratings
     assert dashboard.get_performance_rating(85) == "Excellent"
     assert dashboard.get_performance_rating(65) == "Very Good"
@@ -113,10 +115,10 @@ def test_performance_ratings(dashboard: WindFarmDashboard):
     assert dashboard.get_country_performance_level(15) == "Low"
 
 
-def test_empty_dashboard_data(dashboard):
-    dashboard.wind_farm_data = pd.DataFrame()  # Empty DataFrame
+def test_empty_dashboard_data(dashboard: WindFarmDashboard) -> None:
+    # When
     data = dashboard.get_dashboard_data()
-
+    # Then
     assert data["wind_farms"] == [
         {
             "name": "Anholt",

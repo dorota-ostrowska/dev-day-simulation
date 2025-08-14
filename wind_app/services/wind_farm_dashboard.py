@@ -17,8 +17,8 @@ from typing import Any
 
 from pandas import DataFrame
 
-from wind_app.services.excel_service import WindFarmDataLoader
 from wind_app.services.weather_service import WeatherService
+from wind_app.services.wind_farm_service.interface import AbstractWindFarmService
 from wind_app.utils import log
 
 
@@ -30,16 +30,19 @@ class WindFarmDashboard:
     and dashboard formatting into one simple, easy-to-understand module.
     """
 
-    def __init__(self, data_file_path: str) -> None:
+    def __init__(
+            self,
+            wind_farm_service: AbstractWindFarmService,
+            weather_service: WeatherService | None = None
+        ) -> None:
         """
         Initialize the wind farm dashboard
 
         Args:
             data_file_path: Path to the Excel file containing wind farm data
         """
-        self.data_file_path = data_file_path
-        self.data_loader = WindFarmDataLoader(data_file_path)
-        self.weather_service = WeatherService()
+        self._wind_farm_service = wind_farm_service
+        self.weather_service = weather_service if weather_service else WeatherService()
 
     def process_wind_farm_data(self, wind_farm_data: DataFrame) -> None:
         """Add real-time weather information to wind farm data"""
@@ -80,7 +83,7 @@ class WindFarmDashboard:
         """
 
         # Load base wind farm data from Excel
-        wind_farm_data = self.data_loader.load_wind_farm_data()
+        wind_farm_data = self._wind_farm_service.load_wind_farm_data()
         self.process_wind_farm_data(wind_farm_data)
 
         # If still no data, return empty dashboard

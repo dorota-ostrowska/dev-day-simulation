@@ -3,12 +3,12 @@ import pytest
 from pytest_mock import MockerFixture
 
 from wind_app.services.weather_service import WeatherService
-from wind_app.services.wind_farm_dashboard import WindFarmDashboard
+from wind_app.services.wind_farm_dashboard import _NO_DATA_SYMBOL, WindFarmDashboard
 from wind_app.services.wind_farm_service.excel import WindFarmServiceExcel
 
 
 @pytest.fixture
-def mock_wind_farm_data():
+def mock_wind_farm_data() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "ID": ["ANH", "AVD"],
@@ -49,8 +49,9 @@ def dashboard(
     return dashboard
 
 
-def test_calculate_turbine_power():
-    dashboard = WindFarmDashboard("dummy/path.xlsx")
+def test_calculate_turbine_power() -> None:
+    wind_farm_service = WindFarmServiceExcel(data_file_path="dummy/path.xlsx")
+    dashboard = WindFarmDashboard(wind_farm_service=wind_farm_service)
     test_cases = [
         (0, 100, 0),  # No wind
         (2, 100, 0),  # Below cut-in
@@ -63,41 +64,6 @@ def test_calculate_turbine_power():
     for wind_speed, capacity, expected in test_cases:
         result = dashboard.calculate_turbine_power(wind_speed, capacity)
         assert result == pytest.approx(expected, rel=1e-2)
-
-
-def test_get_dashboard_data(dashboard: WindFarmDashboard) -> None:
-    data = dashboard.get_dashboard_data()
-
-    # Check all required sections are present
-    assert all(
-        key in data
-        for key in [
-            "wind_farms",
-            "country_performance",
-            "fleet_summary",
-            "status_metrics",
-        ]
-    )
-
-    # Check wind farm cards
-    assert len(data["wind_farms"]) == 2
-    farm = data["wind_farms"][0]
-    assert all(
-        key in farm
-        for key in [
-            "name",
-            "country",
-            "current_wind_speed",
-            "estimated_power",
-            "efficiency",
-        ]
-    )
-
-    # Check fleet summary
-    summary = data["fleet_summary"]
-    assert summary["total_capacity"] == 407.2  # 400 + 7.2
-    assert summary["total_generation"] > 0
-    assert 0 <= summary["fleet_efficiency"] <= 100
 
 
 def test_performance_ratings(dashboard: WindFarmDashboard) -> None:
@@ -115,7 +81,7 @@ def test_performance_ratings(dashboard: WindFarmDashboard) -> None:
     assert dashboard.get_country_performance_level(15) == "Low"
 
 
-def test_empty_dashboard_data(dashboard: WindFarmDashboard) -> None:
+def test_get_dashboard_data(dashboard: WindFarmDashboard) -> None:
     # When
     data = dashboard.get_dashboard_data()
     # Then
@@ -150,8 +116,27 @@ def test_empty_dashboard_data(dashboard: WindFarmDashboard) -> None:
             "name": "Denmark",
             "performance_level": "Excellent",
             "progress_width": 90.0,
-            "total_capacity": 407.2,
+            "total_capacity": 407.2,  # 400 + 7.2
         },
     ]
     assert float(data["fleet_summary"]["total_capacity"]) == 407.2
     assert data["status_metrics"]["active_farms"] == 2
+
+
+def test_get_dashboard_data_with_empty_winds(
+        mocker: MockerFixture,
+        mock_wind_farm_service: WindFarmServiceExcel
+    ) -> None:
+    # When
+    weather_service = mocker.Mock()
+    weather_service.get_current_wind_speed.return_value = None  # simulate API failure
+    dashboard = WindFarmDashboard(
+        wind_farm_service=mock_wind_farm_service,
+        weather_service=weather_service
+    )
+    data = dashboard.get_dashboard_data()
+    # Then
+    wind_farm_data = data["wind_farms"]
+
+    for column in {"current_wind_speed", "estimated_power", "efficiency", "performance_rating", "progress_width"}:
+        assert all(wind_farm_data[column] == _NO_DATA_SYMBOL for wind_farm_data in wind_farm_data)

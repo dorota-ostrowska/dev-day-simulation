@@ -40,37 +40,51 @@ A beautiful, real-time dashboard for monitoring offshore wind farms built with P
 
 ## 🚀 Quick start
 
-### Prerequisites
+### 🔵 Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- [Visual Studio Code](https://code.visualstudio.com/download) or any code editor of your choice
-- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
-  - Python 3.13 with `uv` is required to run the application.
-    - `uv python install 3.13`
+- [Visual Studio Code](https://code.visualstudio.com/download) or any code editor of your choice  
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)  
+  - You don’t need to have Python installed on your system.  
+  - `uv` will install and manage Python for you.  
+ 
+    ```bash
+    # Install Python 3.13 with `uv`
+    uv python install 3.13
+    ```
 - [Git](https://git-scm.com/downloads)
 
-### Clone and setup ⚙️
+### 🔵 Clone and setup ⚙️
 
 ```bash
 # Clone the repository
 git clone https://github.com/dorota-ostrowska/dev-day-simulation
 cd dev-day-simulation
+```
 
-# Create virtual environment
+### 🔵 Create virtual environment
+```bash
 uv venv
+```
 
-# Activate virtual environment
-# On Windows:
+### 🔵 Activate virtual environment
+#### On Windows:
+```bash
 .venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
+```
 
-# Install dependencies
+#### On macOS/Linux:
+```bash
+source .venv/bin/activate
+```
+
+### 🔵 Install dependencies
+```bash
 uv pip install -r requirements.txt -r requirements-dev.txt
 ```
 
-### Get your API key 🔑
+### 🔵 Get your API key 🔑
 
 To access weather data, you need a free API key from OpenWeather:
 
@@ -80,16 +94,16 @@ To access weather data, you need a free API key from OpenWeather:
 1. Copy your unique API key (the long string).
 1. Store this key in your configuration file `private_config.py` in the `wind_app` folder.
 
-> ⚠️ **Security Warning**: Keep your API key private! Never commit it to version control or share it publicly. The `private_config.py` file is already in `.gitignore` to prevent accidental commits. If you don't know why API key should stay private - find out why by [visitting the link](https://www.shopify.com/blog/api-key-explained).
+> ⚠️ **Security Warning**: Keep your API key private! Never commit it to version control or share it publicly. The `private_config.py` file is already in `.gitignore` to prevent accidental commits. If you don't know why API key should stay private - find out why by [visiting the link](https://www.shopify.com/blog/api-key-explained).
 
-### Run the application 🏃
+### 🔹 Run the application 🏃
 
 ```bash
 # Start the development server
 uv run python -m main
 ```
 
-### Run the tests 🧪
+### 🔹 Run the tests 🧪
 
 Run unit tests with:
 

@@ -20,12 +20,8 @@ def show_dashboard() -> str:
     try:
         # Initialize the unified wind farm dashboard
         log("🔧 Initializing wind farm dashboard...")
-        wind_farm_service = WindFarmServiceExcel(
-            data_file_path="data/windfarms.xlsx"
-        )
-        dashboard = WindFarmDashboard(
-            wind_farm_service=wind_farm_service
-        )
+        wind_farm_service = WindFarmServiceExcel(data_file_path="data/windfarms.xlsx")
+        dashboard = WindFarmDashboard(wind_farm_service=wind_farm_service)
 
         # Get all dashboard data (loading, processing, and formatting)
         dashboard_data = dashboard.get_dashboard_data()

@@ -43,8 +43,7 @@ def dashboard(
     mock_wind_farm_service: WindFarmServiceExcel, mock_weather_service: WeatherService
 ) -> WindFarmDashboard:
     dashboard = WindFarmDashboard(
-        wind_farm_service=mock_wind_farm_service,
-        weather_service=mock_weather_service
+        wind_farm_service=mock_wind_farm_service, weather_service=mock_weather_service
     )
     return dashboard
 
@@ -124,19 +123,26 @@ def test_get_dashboard_data(dashboard: WindFarmDashboard) -> None:
 
 
 def test_get_dashboard_data_with_empty_winds(
-        mocker: MockerFixture,
-        mock_wind_farm_service: WindFarmServiceExcel
-    ) -> None:
+    mocker: MockerFixture, mock_wind_farm_service: WindFarmServiceExcel
+) -> None:
     # When
     weather_service = mocker.Mock()
     weather_service.get_current_wind_speed.return_value = None  # simulate API failure
     dashboard = WindFarmDashboard(
-        wind_farm_service=mock_wind_farm_service,
-        weather_service=weather_service
+        wind_farm_service=mock_wind_farm_service, weather_service=weather_service
     )
     data = dashboard.get_dashboard_data()
     # Then
     wind_farm_data = data["wind_farms"]
 
-    for column in {"current_wind_speed", "estimated_power", "efficiency", "performance_rating", "progress_width"}:
-        assert all(wind_farm_data[column] == _NO_DATA_SYMBOL for wind_farm_data in wind_farm_data)
+    for column in {
+        "current_wind_speed",
+        "estimated_power",
+        "efficiency",
+        "performance_rating",
+        "progress_width",
+    }:
+        assert all(
+            wind_farm_data[column] == _NO_DATA_SYMBOL
+            for wind_farm_data in wind_farm_data
+        )

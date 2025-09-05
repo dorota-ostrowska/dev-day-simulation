@@ -32,10 +32,10 @@ class WindFarmDashboard:
     """
 
     def __init__(
-            self,
-            wind_farm_service: AbstractWindFarmService,
-            weather_service: WeatherService | None = None
-        ) -> None:
+        self,
+        wind_farm_service: AbstractWindFarmService,
+        weather_service: WeatherService | None = None,
+    ) -> None:
         """
         Initialize the wind farm dashboard
 
@@ -69,8 +69,10 @@ class WindFarmDashboard:
         wind_farm_data["Estimated power"] = wind_farm_data.apply(
             lambda farm: self.calculate_turbine_power(
                 wind_speed=farm["Current wind speed"],
-                max_capacity=farm["Overall capacity"]
-            ) if farm["Current wind speed"] is not None else None,
+                max_capacity=farm["Overall capacity"],
+            )
+            if farm["Current wind speed"] is not None
+            else None,
             axis=1,
         )
 
@@ -159,7 +161,9 @@ class WindFarmDashboard:
     ) -> dict[Any, Any]:
         """Calculate aggregated statistics by country"""
         fixed_wind_farm_data = wind_farm_data.copy()
-        fixed_wind_farm_data["Estimated power"].replace(to_replace=np.nan, value=0, inplace=True)
+        fixed_wind_farm_data["Estimated power"].replace(
+            to_replace=np.nan, value=0, inplace=True
+        )
         return (
             fixed_wind_farm_data.groupby("Country")
             .agg({"Overall capacity": "sum", "Estimated power": "sum"})
@@ -180,22 +184,36 @@ class WindFarmDashboard:
 
             # Calculate efficiency percentage
             efficiency = (
-                (estimated_power / overall_capacity * 100)
-                if overall_capacity > 0
-                else 0
-            ) if estimated_power is not None else None
+                (
+                    (estimated_power / overall_capacity * 100)
+                    if overall_capacity > 0
+                    else 0
+                )
+                if estimated_power is not None
+                else None
+            )
 
             # Prepare card data
             farm_card = {
                 "name": farm.get("Name", "Unknown"),
                 "country": farm.get("Country", "Unknown"),
-                "current_wind_speed": round(current_wind_speed, 1) if current_wind_speed is not None else _NO_DATA_SYMBOL,
-                "estimated_power": round(estimated_power, 1) if estimated_power is not None else _NO_DATA_SYMBOL,
+                "current_wind_speed": round(current_wind_speed, 1)
+                if current_wind_speed is not None
+                else _NO_DATA_SYMBOL,
+                "estimated_power": round(estimated_power, 1)
+                if estimated_power is not None
+                else _NO_DATA_SYMBOL,
                 "overall_capacity": round(overall_capacity, 0),
                 "number_of_turbines": int(farm.get("Number of turbines", 0)),
-                "efficiency": round(efficiency, 1) if efficiency is not None else _NO_DATA_SYMBOL,
-                "performance_rating": self.get_performance_rating(efficiency) if efficiency is not None else _NO_DATA_SYMBOL,
-                "progress_width": min(round(efficiency, 1), 100) if efficiency is not None else _NO_DATA_SYMBOL,
+                "efficiency": round(efficiency, 1)
+                if efficiency is not None
+                else _NO_DATA_SYMBOL,
+                "performance_rating": self.get_performance_rating(efficiency)
+                if efficiency is not None
+                else _NO_DATA_SYMBOL,
+                "progress_width": min(round(efficiency, 1), 100)
+                if efficiency is not None
+                else _NO_DATA_SYMBOL,
             }
 
             wind_farm_cards.append(farm_card)

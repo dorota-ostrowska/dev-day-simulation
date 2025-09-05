@@ -10,4 +10,3 @@ class AbstractWindFarmService(ABC):
     def load_wind_farm_data(self) -> pd.DataFrame:
         """Get data frame with wind farm information."""
         raise NotImplementedError("This method should be implemented by subclasses.")
-    

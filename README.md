@@ -122,7 +122,7 @@ Visit [http://localhost:5000](http://localhost:5000) to see your wind farm dashb
 ## 📁 Project Structure
 
 ```bash
-wind-farm-dashboard/
+DEV-DAY-SIMULATION/
 ├── main.py                         # Application entry point
 ├── requirements.txt                # Python dependencies for the application
 ├── requirements-dev.txt            # Python dependencies for development
@@ -130,13 +130,16 @@ wind-farm-dashboard/
 │   └── windfarms.xlsx              # Wind farm data
 ├── wind_app/
 │   ├── __init__.py                 # Flask app factory
-│   ├── private_config.py            # Your API key (not in git)
+│   ├── private_config.py           # Your API key (not in git)
+│   ├── utils.py                    # Simple logger
 │   ├── routes/
 │   │   └── home.py                 # Dashboard route handler
 │   ├── services/
 │   │   ├── wind_farm_dashboard.py  # Main dashboard logic
 │   │   ├── excel_service.py        # Excel data loading
-│   │   └── weather_service.py      # Weather API integration
+│   │   └── wind_farm_service/      # Weather API integration
+│   │       └── excel.py
+│   │       └── interface.py
 │   └── templates/
 │       ├── base.html.j2             # HTML template base
 │       └── home.html.j2            # Dashboard template

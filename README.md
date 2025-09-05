@@ -141,7 +141,7 @@ DEV-DAY-SIMULATION/
 │   │       └── excel.py
 │   │       └── interface.py
 │   └── templates/
-│       ├── base.html.j2             # HTML template base
+│       ├── base.html.j2            # HTML template base
 │       └── home.html.j2            # Dashboard template
 └──  tests/                         # Test files
 ```
